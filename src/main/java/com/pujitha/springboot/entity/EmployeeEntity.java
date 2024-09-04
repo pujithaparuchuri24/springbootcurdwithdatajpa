@@ -1,19 +1,18 @@
 package com.pujitha.springboot.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+//@EntityListeners(AuditingEntityListener.class)
 public class EmployeeEntity {
 	
 	@EmbeddedId
@@ -21,12 +20,19 @@ public class EmployeeEntity {
 	private Float salary;
 	private String desingation;
 	
-	@CreatedDate
-	@Column(updatable=false)
-	private LocalDate creationDate;
+	private LocalDateTime creationDate;
+	private LocalDateTime updateDate;
 	
-	@LastModifiedDate
-	@Column(insertable=false)
-	private LocalDate updateDate;
-	
+	 @PrePersist
+	  protected void onCreate() {
+	      creationDate = LocalDateTime.now();
+	      System.out.println("creationDate " + creationDate);
+	  }
+	  
+	  @PreUpdate
+	  protected void onUpdate() {
+	   
+		  updateDate = LocalDateTime.now();
+		  System.out.println("updateDate " + updateDate);
+	  }
 }

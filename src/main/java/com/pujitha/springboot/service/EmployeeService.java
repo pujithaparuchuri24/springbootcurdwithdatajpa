@@ -25,9 +25,8 @@ public class EmployeeService {
 		BeanUtils.copyProperties(dto, entity);
 		entity.getPk().setEmailId(dto.getPk().getEmailId());
 		entity.getPk().setEmailName(dto.getPk().getEmailName());
-		
-		repo.save(entity);
-		
+		entity= repo.save(entity);
+		System.out.println("creationDate from service after save " + entity.getCreationDate());
 		EmployeeResponseDto response= new EmployeeResponseDto();
 		BeanUtils.copyProperties(entity, response);
 		response.getPk().setEmailId(dto.getPk().getEmailId());
