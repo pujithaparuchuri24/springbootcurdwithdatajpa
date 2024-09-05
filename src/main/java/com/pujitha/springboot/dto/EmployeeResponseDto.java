@@ -1,7 +1,9 @@
 package com.pujitha.springboot.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.pujitha.springboot.entity.Address;
 import com.pujitha.springboot.entity.EmployeeCompositePrimaryKey;
 
 import lombok.Getter;
@@ -16,5 +18,6 @@ public class EmployeeResponseDto {
 	private String desingation;
 	private LocalDateTime creationDate;
 	private LocalDateTime updateDate;
+	private List<Address> address;
 
 }
