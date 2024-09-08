@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Address implements Serializable {
+public class AddressEntity implements Serializable {
 
 	@Id
 

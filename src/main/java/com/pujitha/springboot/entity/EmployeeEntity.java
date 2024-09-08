@@ -39,7 +39,7 @@ public class EmployeeEntity implements Serializable {
 	  @OneToMany(cascade=CascadeType.ALL)
 	  @JoinColumns({ @JoinColumn(name = "emp_name", referencedColumnName = "name"),
 	  @JoinColumn(name = "emp_mail", referencedColumnName = "email") })
-	  private List<Address> address;
+	  private List<AddressEntity> address;
 	
 	  	//providing bi direction if address class owns foreign key
 		//@OneToMany(mappedBy= "employee")
