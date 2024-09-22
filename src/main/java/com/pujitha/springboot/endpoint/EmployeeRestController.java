@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,8 @@ import com.pujitha.springboot.dto.EmployeeRequestDto;
 import com.pujitha.springboot.dto.EmployeeResponseDto;
 import com.pujitha.springboot.entity.EmployeeCompositePrimaryKey;
 import com.pujitha.springboot.service.EmployeeService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class EmployeeRestController {
@@ -32,6 +35,15 @@ public class EmployeeRestController {
 	public ResponseEntity<List<EmployeeResponseDto>> getAllEmployee()
 	{
 		return new ResponseEntity<>(service.findAllEmployess(),HttpStatus.OK);
+	}
+	//it is used to call post, delete,put,patch request for basic authorization
+	// when we are calling the above type of request we need send the below generated token
+	//X-CSRF-TOKEN as request header when we are making post,put,delete
+	@GetMapping("/getcsrf")
+	public CsrfToken getCsrfToken(HttpServletRequest request)
+	{
+		return (CsrfToken)request.getAttribute("_csrf");
+		
 	}
 	
 	@GetMapping("/getemployeebyname")
