@@ -1,8 +1,6 @@
 package com.pujitha.springboot.dto;
 
 import java.io.Serializable;
-
-
 import lombok.Data;
 
 @Data

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.pujitha.springboot.dto.EmployeeRequestDto;
 import com.pujitha.springboot.dto.EmployeeResponseDto;
 import com.pujitha.springboot.entity.EmployeeCompositePrimaryKey;
@@ -25,13 +27,21 @@ public class EmployeeRestController {
 	@Autowired
 	private EmployeeService service;
 	
-	@PostMapping("/employeesave")
+	// when ever we need to get response in xml format then we need add @JacksonXmlRootElement to response class 
+	// need to add produces in http reqeust method and we need to request header with "accept"
+	
+	// when ever our rest service need to consume the xml body then we need to use consumes and @JacksonXmlRootElement in repsonse class
+	//need to send header content-type as application/xml from postman
+	
+	@PostMapping(value="/employeesave", consumes = {MediaType.APPLICATION_JSON_VALUE,"application/xml"},
+			produces={"application/xml", "application/json"})
 	public ResponseEntity<EmployeeResponseDto> save(@RequestBody EmployeeRequestDto dto)
 	{
 		return new ResponseEntity<>(service.saveEmployeeDto(dto),HttpStatus.CREATED);
 	}
-	
-	@GetMapping("/getallemployees")
+	// here in below request I have used both produces type if we don't mentioned accept header in postman then by default 
+	// it will json because of order precedence.
+	@GetMapping(value="/getallemployees", produces={ "application/json", "application/xml"})
 	public ResponseEntity<List<EmployeeResponseDto>> getAllEmployee()
 	{
 		return new ResponseEntity<>(service.findAllEmployess(),HttpStatus.OK);
@@ -46,20 +56,21 @@ public class EmployeeRestController {
 		
 	}
 	
-	@GetMapping("/getemployeebyname")
+	@GetMapping(value="/getemployeebyname",
+			produces={"application/xml", "application/json"})
 	public ResponseEntity<EmployeeResponseDto> getEmployeeName(@RequestParam String name)
 	{
 		System.out.println(name);
 		return new ResponseEntity<>(service.findByName(name), HttpStatus.OK);
 	}
 	
-	@GetMapping("/getemployeebydesignation/{designation}")
+	@GetMapping(value="/getemployeebydesignation/{designation}", produces={"application/xml", "application/json"})
 	public ResponseEntity<List<EmployeeResponseDto>> getAllEmployeeDesignation(@PathVariable String designation)
 	{
 		return new ResponseEntity<>(service.findAllEmployeeByDesignation(designation),HttpStatus.OK);
 	}
 	
-	@PostMapping("/getEmployeeusingpk")
+	@PostMapping(value= "/getEmployeeusingpk", produces={"application/xml", "application/json"})
 	public ResponseEntity<EmployeeResponseDto> getEmployeebyusingPK(@RequestBody EmployeeCompositePrimaryKey pk)
 	{
 		return new ResponseEntity<>(service.findByCompositePrimaryKey(pk),HttpStatus.OK);
