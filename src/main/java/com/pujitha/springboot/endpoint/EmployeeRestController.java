@@ -14,15 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.pujitha.springboot.dto.EmployeeRequestDto;
 import com.pujitha.springboot.dto.EmployeeResponseDto;
 import com.pujitha.springboot.entity.EmployeeCompositePrimaryKey;
 import com.pujitha.springboot.service.EmployeeService;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
+@Tag(name = "Employee", description  = "Employee Management API's")
 public class EmployeeRestController {
 	@Autowired
 	private EmployeeService service;
@@ -33,6 +38,11 @@ public class EmployeeRestController {
 	// when ever our rest service need to consume the xml body then we need to use consumes and @JacksonXmlRootElement in repsonse class
 	//need to send header content-type as application/xml from postman
 	
+	//@Tag(name="save Employee", description = "saving the employee")
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = EmployeeResponseDto.class), mediaType = "application/json") }),
+	    @ApiResponse(responseCode = "404", description = "The Tutorial with given Id was not found.", content = { @Content(schema = @Schema()) })
+	  })
 	@PostMapping(value="/employeesave", consumes = {MediaType.APPLICATION_JSON_VALUE,"application/xml"},
 			produces={"application/xml", "application/json"})
 	public ResponseEntity<EmployeeResponseDto> save(@RequestBody EmployeeRequestDto dto)

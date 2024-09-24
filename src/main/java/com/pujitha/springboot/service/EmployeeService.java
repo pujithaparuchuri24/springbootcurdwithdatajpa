@@ -27,7 +27,10 @@ public class EmployeeService {
 		
 		EmployeeEntity entity= mapper.employeeRequestToEmployeeEntity(dto);
 		entity=repo.save(entity);
-		return mapper.employeeEntityToEmployeeResponseDto(entity);
+		EmployeeResponseDto response= mapper.employeeEntityToEmployeeResponseDto(entity);
+		// for checking purpose here I'm setting pk realted to null
+		response.setPk(null);
+		return response;
 	}
 	public List<EmployeeResponseDto> findAllEmployess()
 	{
