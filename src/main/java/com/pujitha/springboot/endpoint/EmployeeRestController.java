@@ -1,17 +1,23 @@
 package com.pujitha.springboot.endpoint;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pujitha.springboot.dto.EmployeeRequestDto;
@@ -25,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @Tag(name = "Employee", description  = "Employee Management API's")
@@ -45,7 +52,7 @@ public class EmployeeRestController {
 	  })
 	@PostMapping(value="/employeesave", consumes = {MediaType.APPLICATION_JSON_VALUE,"application/xml"},
 			produces={"application/xml", "application/json"})
-	public ResponseEntity<EmployeeResponseDto> save(@RequestBody EmployeeRequestDto dto)
+	public ResponseEntity<EmployeeResponseDto> save(@Valid @RequestBody EmployeeRequestDto dto)
 	{
 		return new ResponseEntity<>(service.saveEmployeeDto(dto),HttpStatus.CREATED);
 	}
@@ -84,5 +91,18 @@ public class EmployeeRestController {
 	public ResponseEntity<EmployeeResponseDto> getEmployeebyusingPK(@RequestBody EmployeeCompositePrimaryKey pk)
 	{
 		return new ResponseEntity<>(service.findByCompositePrimaryKey(pk),HttpStatus.OK);
+	}
+	
+	//to handle validation which we have used annotation in request class
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+	    Map<String, String> errors = new HashMap<>();
+	    ex.getBindingResult().getAllErrors().forEach((error) -> {
+	        String fieldName = ((FieldError) error).getField();
+	        String errorMessage = error.getDefaultMessage();
+	        errors.put(fieldName, errorMessage);
+	    });
+	    return errors;
 	}
 }
