@@ -1,7 +1,10 @@
 package com.pujitha.springboot.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -9,12 +12,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @Configuration
 public class SpringSecurityConfiguration{
+	
+	
+	@Autowired
+	UserDetailsService userDetailService;
+	
 	// we can resolve csrf issue by creating new session every time or samesiteStrict
 	//by default spring security has their own configuration 
 	//so here we have override the security behavior and enable new session for every request
@@ -23,7 +32,8 @@ public class SpringSecurityConfiguration{
 	public SecurityFilterChain getSecurityFilterChain(HttpSecurity http) throws Exception
 	{
 		 return http.csrf(custom->custom.disable()).
-		authorizeHttpRequests(request->request.anyRequest().authenticated()).
+		authorizeHttpRequests(request->request.requestMatchers("/user/saveUser").permitAll()
+										.anyRequest().authenticated()).
 		httpBasic(Customizer.withDefaults()).
 		// formLogin is commented bcoz when we are requesting service it will load form page
 		//but it will treat as a new session everytime
@@ -35,7 +45,7 @@ public class SpringSecurityConfiguration{
 	//in memory authentication when we implement then properties file username and password won't work only 
 	//the belwo mentioned user details will work
 	//for inmemoryuserDeatilsManager class we can send multiple user object
-	@Bean
+	//@Bean
 	public UserDetailsService getUserDetailsService()
 	{
 		UserDetails newUser=User.
@@ -47,5 +57,17 @@ public class SpringSecurityConfiguration{
 		
 		return new InMemoryUserDetailsManager(newUser);
 	}
+	
+	//the above method is insecured because user details is showing in code so to avoid that one we will create our own to logic to do security
+	
+	@Bean
+	public AuthenticationProvider createAuth()
+	{
+		DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+		provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+		provider.setUserDetailsService(userDetailService);
+		return provider;
+	}
+	
 
 }
