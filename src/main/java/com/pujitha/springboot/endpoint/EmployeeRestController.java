@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pujitha.springboot.dto.EmployeeRequestDto;
 import com.pujitha.springboot.dto.EmployeeResponseDto;
 import com.pujitha.springboot.entity.EmployeeCompositePrimaryKey;
+import com.pujitha.springboot.entity.EmployeeEntity;
 import com.pujitha.springboot.service.EmployeeService;
 
 import io.swagger.v3.oas.annotations.media.Content;
